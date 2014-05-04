@@ -1,6 +1,7 @@
 import java.util.Random;
 
 //I just want to see that this shows up on git
+//I added another comment
 
 public class Airplane extends Thread{
 	private double x; //must be in [0, 100]
