@@ -218,6 +218,10 @@ public class Airplane extends Thread{
 			throw new RuntimeException("You should not pass in a negative value for time");
 		}
 		
+		if (!flying){
+			return; //don't change anything
+		}
+		
 		double linSpeed = this.withinBounds(Math.sqrt(Math.pow(this.xDot, 2) + Math.pow(this.yDot, 2)), MINSPEED, MAXSPEED);
 
 		double angSpeed = this.withinBounds(this.thetaDot, MINOMEGA, MAXOMEGA);

@@ -1,18 +1,20 @@
 
 public class AirplaneController extends Thread{
-	protected Simulator s; //S is shared with all other vehicle controllers, so it must
+	private Simulator s; //S is shared with all other vehicle controllers, so it must
 							//be protected.
-	protected Airplane plane; //is unique to the controller, so doesn't need locks
-	protected int numSides; //used for polygons
+	private Airplane plane; //is unique to the controller, so doesn't need locks
+	private Airport startAirport;
+	private Airport endAirport;
 
-	public AirplaneController(Simulator s, Airplane p){
+	public AirplaneController(Simulator s, Airplane p, Airport startAirport, Airport endAirport){
 		if (p == null){
 			throw new IllegalArgumentException("plane was null");
 		}
 		
 		this.s = s;
 		this.plane = p;
-		this.numSides = 5;
+		this.startAirport = startAirport;
+		this.endAirport = endAirport;
 	}
 
 	public void run(){
@@ -59,6 +61,17 @@ public class AirplaneController extends Thread{
 	}
 
 	public Control getControl(int time){
+		//TODO: logic
+		if (time <= 0){
+			double[] oldPose = plane.getPosition();
+			double[] newPose = new double[3];
+			newPose[0] = oldPose[0];
+			newPose[1] = oldPose[1];
+			//change the angle to point from startAirport to endAirport 
+			newPose[2] = Math.atan2(endAirport.getY() - startAirport.getY(), endAirport.getX() - startAirport.getX());
+			//TODO unit tests for angle calculation
+			
+		}
 		return new Control(10, 0);
 	}
 }
