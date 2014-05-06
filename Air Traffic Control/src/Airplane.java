@@ -22,12 +22,15 @@ public class Airplane extends Thread{
 	private final double MINOMEGA = -Math.PI/4;
 	private final double MAXOMEGA = Math.PI/4;
 	
-//	private final double DOWNRANGE_VAR = Math.sqrt(.025);
-//	private final double CROSSRANGE_VAR = Math.sqrt(.05);
+	//no noise
 	private final double DOWNRANGE_VAR = Math.sqrt(0);
 	private final double CROSSRANGE_VAR = Math.sqrt(0);
 
-	public Airplane(double[] pose, double s, double omega, Simulator sim){
+	private double fuelLevel;
+	
+	private boolean flying;
+	
+	public Airplane(double[] pose, double s, double omega, Simulator sim, double startFuel){
 		this.s = sim;
 
 		if (pose.length != 3){
@@ -42,7 +45,8 @@ public class Airplane extends Thread{
 		this.xDot = speed*Math.cos(this.theta);
 		this.yDot = speed*Math.sin(this.theta);
 
-		if (!checkRep()){throw new RuntimeException("The constraints on the state have been violated");}
+		this.fuelLevel = startFuel;
+		this.flying = false;
 	}
 
 	public void run(){
@@ -57,7 +61,7 @@ public class Airplane extends Thread{
 						double timeDif = time-oldTime;
 						int sec = (int)(timeDif);
 						int msec = (int) ((timeDif*1000)%1000);
-						this.advance(sec, msec);
+						this.advance(1000*sec + msec);
 						oldTime = time;
 					}
 					else{
@@ -76,30 +80,6 @@ public class Airplane extends Thread{
 		}
 	}
 
-	/**
-	 * check that our internal representation never violates
-	 * what we are told.
-	 * @return true iff the requirements are met
-	 */
-	private synchronized boolean checkRep(){
-		if (this.x < MINCOORDINATE || this.x > MAXCOORDINATE){
-			return false;
-		}
-		if (this.y < MINCOORDINATE || this.y > MAXCOORDINATE){
-			return false;
-		}
-		if (this.theta < MINTHETA || this.theta > MAXTHETA){
-			return false;
-		}
-		double speed = Math.sqrt(this.xDot*this.xDot + this.yDot*this.yDot);
-		if (speed < MINSPEED || speed > MAXSPEED){
-			return false;
-		}
-		if (this.thetaDot < MINOMEGA || this.thetaDot > MAXOMEGA){
-			return false;
-		}
-		return true;
-	}
 
 	/**
 	 * @return an array of 3 doubles that say the x, y, and theta
@@ -125,6 +105,18 @@ public class Airplane extends Thread{
 		returnable[2] = this.thetaDot;
 
 		return returnable;
+	}
+	
+	public synchronized double getFuelLevel(){
+		return this.fuelLevel;
+	}
+	
+	public synchronized boolean getFlying(){
+		return this.flying;
+	}
+	
+	public synchronized void setFlying(boolean shouldItFly){
+		this.flying = shouldItFly;
 	}
 
 	/**
@@ -214,13 +206,13 @@ public class Airplane extends Thread{
 	 * @param sec
 	 * @param msec
 	 */
-	public synchronized void advance(int sec, int msec){
+	public synchronized void advance(int msec){
 		Random r = new Random();
 		double errD = r.nextGaussian()*DOWNRANGE_VAR;
 		double errC = r.nextGaussian()*CROSSRANGE_VAR;
 		
 		
-		double time = sec + .001*msec;
+		double time = .001*msec;
 
 		if (time < 0){
 			throw new RuntimeException("You should not pass in a negative value for time");
@@ -230,10 +222,11 @@ public class Airplane extends Thread{
 
 		double angSpeed = this.withinBounds(this.thetaDot, MINOMEGA, MAXOMEGA);
 		
+		this.fuelLevel -= time; //burn 1 unit of fuel per 1 second
+		
 		if (angSpeed == 0){ //if going straight, just update x and y
 			this.x = this.withinBounds(this.x + linSpeed*time*Math.cos(this.theta), 0, 100) + Math.cos(this.theta)*errD - Math.sin(this.theta)*errC;
 			this.y = this.withinBounds(this.y + linSpeed*time*Math.sin(this.theta), 0, 100) + Math.sin(this.theta)*errD + Math.sin(this.theta)*errC;
-
 			return;
 		}
 		//if not going straight, use geometry to compute an arc
