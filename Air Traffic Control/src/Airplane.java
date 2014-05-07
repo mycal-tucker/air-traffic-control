@@ -89,7 +89,7 @@ public class Airplane extends Thread{
 		double[] returnable = new double[3];
 		returnable[0] = this.x;
 		returnable[1] = this.y;
-		returnable[2] = this.theta;
+		returnable[2] = 3*this.theta;
 
 		return returnable;
 	}
