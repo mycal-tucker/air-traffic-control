@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 public class AirplaneController extends Thread{
 	private Simulator s; //S is shared with all other vehicle controllers, so it must
@@ -5,8 +7,12 @@ public class AirplaneController extends Thread{
 	private Airplane plane; //is unique to the controller, so doesn't need locks
 	private Airport startAirport;
 	private Airport endAirport;
-
-	public AirplaneController(Simulator s, Airplane p, Airport startAirport, Airport endAirport){
+	private int departureTime;
+	private ArrayList<Airplane> otherAirplanes;
+	
+	private boolean clearedToLand;
+	
+	public AirplaneController(Simulator s, Airplane p, Airport startAirport, Airport endAirport, int departureTime){
 		if (p == null){
 			throw new IllegalArgumentException("plane was null");
 		}
@@ -15,6 +21,11 @@ public class AirplaneController extends Thread{
 		this.plane = p;
 		this.startAirport = startAirport;
 		this.endAirport = endAirport;
+		this.departureTime = departureTime;
+		
+		this.otherAirplanes = new ArrayList<Airplane>(); //start as an empty list
+		
+		this.clearedToLand = false;
 	}
 
 	public void run(){
@@ -62,7 +73,7 @@ public class AirplaneController extends Thread{
 
 	public Control getControl(int time){
 		//TODO: logic
-		if (time <= 0){
+		if (time < departureTime){ //get the plane pointed in the right direction
 			double[] oldPose = plane.getPosition();
 			double[] newPose = new double[3];
 			newPose[0] = oldPose[0];
@@ -70,8 +81,63 @@ public class AirplaneController extends Thread{
 			//change the angle to point from startAirport to endAirport 
 			newPose[2] = Math.atan2(endAirport.getY() - startAirport.getY(), endAirport.getX() - startAirport.getX());
 			//TODO unit tests for angle calculation
+			plane.setPosition(newPose);
+			if (plane.getFlying()){
+				System.err.println("The plane is flying but it isn't the departure time yet. What?");
+			}
+			else{
+				return new Control(0, 0);
+				//Applying this control would be illegal, but since the plane isn't flying,
+				//it won't try to use this control.
+			}
+		}
+		if (time >= departureTime){
+			plane.setFlying(true);
+			
+			double targX = this.endAirport.getX();
+			double targY = this.endAirport.getY();
+			double[] currPosition = this.plane.getPosition();
+			double currX = currPosition[0];
+			double currY = currPosition[1];
+			double currTheta = currPosition[2];
+			
+			//For now, ignore collision avoidance
+			//TODO: collision avoidance
+			
+			double targTheta = Math.atan2(targY - currY, targX - currX);
+			final double Krot = 1;
+			double omega = Krot*(targTheta - currTheta);
+			
+			final double requestLandThreshold = 5;
+			//if close to airport, request landing
+			if (Math.hypot(targX - currX, targY - currY) < 5){
+				if (this.clearedToLand){
+					this.endAirport.commitLand(plane);
+				}
+				else{
+					this.clearedToLand = this.endAirport.requestLand(plane);
+				}
+			}
+			
+			return new Control(10, omega);
 			
 		}
 		return new Control(10, 0);
+	}
+	
+	public Airport getStartAirport(){
+		return this.startAirport;
+	}
+	
+	public Airport getEndAirport(){
+		return this.endAirport;
+	}
+	
+	public int getDepartureTime(){
+		return this.departureTime;
+	}
+	
+	public void addOtherAirplane(Airplane a){
+		this.otherAirplanes.add(a);
 	}
 }

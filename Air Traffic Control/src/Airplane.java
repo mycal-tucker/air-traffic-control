@@ -219,7 +219,8 @@ public class Airplane extends Thread{
 		}
 		
 		if (!flying){
-			return; //don't change anything
+			return; //don't change anything if flying (the plane shouldn't move)
+			//we also assume that staying at an airport doesn't burn any fuel.
 		}
 		
 		double linSpeed = this.withinBounds(Math.sqrt(Math.pow(this.xDot, 2) + Math.pow(this.yDot, 2)), MINSPEED, MAXSPEED);
