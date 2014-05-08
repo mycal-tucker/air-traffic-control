@@ -58,9 +58,13 @@ public class DisplayClient  {
 	  StringBuffer message = new StringBuffer();
 	  message.append("airports");
 	  message.append(" ");
-	  message.append("justFiller for fun");
-	  //output.println(message);
-	  //output.flush();
+	  for (int i = 0; i < airportList.size(); i ++){
+		  Airport a = airportList.get(i);
+		  message.append(a.getX() + " ");
+		  message.append(a.getY() + " ");
+	  }
+	  output.println(message);
+	  output.flush();
   }
   
   public static void main(String argv[]) throws IOException {

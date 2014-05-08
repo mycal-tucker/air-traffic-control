@@ -90,7 +90,24 @@ public class DisplayServer extends JPanel implements KeyListener {
 	    synchronized (my_display) {
 	      my_display.trace = false;
 	    }
-	  } else {
+	  }
+	  
+	  /*Our thing below:
+	   * 
+	   */
+	  else if (tok.equals("airports")){
+		  synchronized (my_display){
+			  System.out.println("got an airport message");
+			  //TODO parse more info about all the airports
+		  }
+	  }
+	  /*
+	   * End of our thing
+	   */
+	  
+	  
+	  
+	  else {
 	    synchronized (my_display) {
 	      if (my_display.numVehicles != Integer.parseInt(tok)) {
 		my_display.numVehicles = Integer.parseInt(tok);

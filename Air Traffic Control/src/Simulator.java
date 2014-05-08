@@ -169,10 +169,10 @@ public class Simulator extends Thread{
 		Airport a1 = new Airport(25, 25, 2);
 		Airport a2 = new Airport(75, 75, 2);
 		
-		//s.addAirport(a1);
-		//s.addAirport(a2);
+		s.addAirport(a1);
+		s.addAirport(a2);
 		
-		//tempDC.sendAirportMessage(s.airportList);
+		tempDC.sendAirportMessage(s.airportList);
 		
 		//start with 50 fuel
 		Airplane plane1 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s, 50);
