@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -18,7 +17,8 @@ public class DisplayServer extends JPanel implements KeyListener {
   protected int shapeX[], shapeY[];
   protected JFrame frame;
   protected NumberFormat format = new DecimalFormat("#####.##");
-  protected String myHostname; 
+  protected String myHostname;
+
 
   public class History {
     History() {
@@ -201,14 +201,14 @@ public class DisplayServer extends JPanel implements KeyListener {
 
       for (int i = 0; i < 9; i++) {
 	// We scale the x and y by 5, since the bounds on X and Y are 100x100
-	// but our windows is 500x500.
+	// but our windows is 1000x1000.
 
-	double x = gvX[j]*5;
-	double y = gvY[j]*5;
+	double x = gvX[j]*10;
+	double y = gvY[j]*10;
 	double th = gvTheta[j];
 	drawX[i] = (int)(x+Math.cos(-th)*shapeX[i]+Math.sin(th)*shapeY[i]);
 	drawY[i] = (int)(y-Math.sin( th)*shapeX[i]+Math.cos(th)*shapeY[i]);
-	drawY[i] = 500- drawY[i];
+	drawY[i] = 1000- drawY[i];
       }
       g.drawPolygon(drawX, drawY, 9);
     }
@@ -225,12 +225,12 @@ public class DisplayServer extends JPanel implements KeyListener {
 
       for (int i = 0; i < histories[j].myNumPoints; i++) {
 	// We scale the x and y by 5, since the bounds on X and Y are 100x100
-	// but our windows is 500x500.
+	// but our windows is 1000x1000.
 
-	double x = histories[j].myX[i]*5;
-	double y = histories[j].myY[i]*5;
+	double x = histories[j].myX[i]*10;
+	double y = histories[j].myY[i]*10;
 	drawX[i] = (int)(x);
-	drawY[i] = 500- (int)y;
+	drawY[i] = 1000- (int)y;
       }
       g.drawPolyline(drawX, drawY, histories[j].myNumPoints);
     }
