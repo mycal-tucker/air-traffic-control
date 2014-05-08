@@ -58,9 +58,9 @@ public class Simulator extends Thread{
 	 * @param gv: ground vehicle to add the list of ground vehicles
 	 * Note: assumes that the ground vehicle arrives non-updated
 	 */
-	public void addAirplane(Airplane gv){
-		this.groundVList.add(gv);
-		gv.start();
+	public void addAirplane(Airplane a){
+		this.groundVList.add(a);
+		a.start();
 		this.numNonUpdatedGV ++;
 	}
 
@@ -83,7 +83,7 @@ public class Simulator extends Thread{
 		this.running = true;
 		this.time = 0;
 
-		while (this.time < 100000){ //100 seconds == 100,000 milliseconds
+		while (this.time < 10000){ //100 seconds == 100,000 milliseconds
 			/*
 			 * Must lock on this (the simulator) to guarantee that all vehicles
 			 * get updated exactly once at each time step.
@@ -171,6 +171,17 @@ public class Simulator extends Thread{
 //			s.addAirplane(tempGV);
 //			tempVC.start();
 //		}
+		
+		Airport a1 = new Airport(25, 25, 2);
+		Airport a2 = new Airport(75, 75, 2);
+		
+		//start with 50 fuel
+		Airplane plane1 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s, 50);
+		//departure time of 50
+		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 50);
+		
+		s.addAirplane(plane1);
+		cont1.start();
 
 		s.run();
 	}
