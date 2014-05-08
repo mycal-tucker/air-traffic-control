@@ -11,6 +11,7 @@ public class AirplaneController extends Thread{
 	private ArrayList<Airplane> otherAirplanes;
 	
 	private boolean clearedToLand;
+	private boolean destinationReached;
 	
 	public AirplaneController(Simulator s, Airplane p, Airport startAirport, Airport endAirport, int departureTime){
 		if (p == null){
@@ -26,6 +27,7 @@ public class AirplaneController extends Thread{
 		this.otherAirplanes = new ArrayList<Airplane>(); //start as an empty list
 		
 		this.clearedToLand = false;
+		this.destinationReached = false;
 	}
 
 	public void run(){
@@ -74,10 +76,10 @@ public class AirplaneController extends Thread{
 	public Control getControl(int time){
 		//TODO: logic
 		if (time < departureTime){ //get the plane pointed in the right direction
-			double[] oldPose = plane.getPosition();
+			//double[] oldPose = plane.getPosition();
 			double[] newPose = new double[3];
-			newPose[0] = oldPose[0];
-			newPose[1] = oldPose[1];
+			newPose[0] = startAirport.getX();
+			newPose[1] = startAirport.getY();
 			//change the angle to point from startAirport to endAirport 
 			newPose[2] = Math.atan2(endAirport.getY() - startAirport.getY(), endAirport.getX() - startAirport.getX());
 			//TODO unit tests for angle calculation
@@ -91,7 +93,7 @@ public class AirplaneController extends Thread{
 				//it won't try to use this control.
 			}
 		}
-		if (time >= departureTime){
+		if (time >= departureTime && !destinationReached){
 			plane.setFlying(true);
 			
 			double targX = this.endAirport.getX();
@@ -108,19 +110,27 @@ public class AirplaneController extends Thread{
 			final double Krot = 1;
 			double omega = Krot*(targTheta - currTheta);
 			
-			final double requestLandThreshold = 5;
+			final double requestLandThreshold = 10;
+			final double commitLandThreshold = 5;
+			System.out.println("distance: " + Math.hypot(targX - currX, targY - currY));
 			//if close to airport, request landing
-			if (Math.hypot(targX - currX, targY - currY) < 5){
-				if (this.clearedToLand){
+			if (Math.hypot(targX - currX, targY - currY) < requestLandThreshold){
+				if (this.clearedToLand && Math.hypot(targX - currX, targY - currY) < commitLandThreshold){
 					this.endAirport.commitLand(plane);
+					this.plane.setFlying(false); //it landed!
+					this.destinationReached = true;
 				}
-				else{
+				else if (!clearedToLand){
+					System.out.println("requesting to land");
 					this.clearedToLand = this.endAirport.requestLand(plane);
 				}
 			}
-			
+			//TODO
 			return new Control(10, omega);
 			
+		}
+		if (destinationReached){
+			//it got to the goal. make it disappear?
 		}
 		return new Control(10, 0);
 	}

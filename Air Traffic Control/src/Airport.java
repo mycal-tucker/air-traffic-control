@@ -37,15 +37,17 @@ public class Airport {
 	 * @return
 	 */
 	public boolean requestLand(Airplane a){
+		this.landingAirplanes.add(a);
 		return true;
 	}
 	
 	public void commitLand(Airplane a){
-		if (!landingAirplanes.contains(a)){
+		if (!this.landingAirplanes.contains(a)){
 			System.err.println("you can't commit a landing before requesting it.");
 			return;
 		}
-		landingAirplanes.remove(a);
-		groundedAirplanes.add(a);
+		this.landingAirplanes.remove(a);
+		this.groundedAirplanes.add(a);
+		
 	}
 }

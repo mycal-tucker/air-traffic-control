@@ -136,7 +136,7 @@ public class Airplane extends Thread{
 
 		this.x = withinBounds(desiredX, MINCOORDINATE, MAXCOORDINATE);
 		this.y = withinBounds(desiredY, MINCOORDINATE, MAXCOORDINATE);
-		this.theta = convertTheta(desiredTheta);		
+		this.theta = convertTheta(desiredTheta);
 	}
 
 
