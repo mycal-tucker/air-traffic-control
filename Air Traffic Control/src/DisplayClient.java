@@ -49,7 +49,7 @@ public class DisplayClient  {
       message.append(format.format(gvX[i])+" "+format.format(gvY[i])+" "+
 		     format.format(gvTheta[i])+" ");
     }
-    System.out.println("Sent "+message);
+    //System.out.println("Sent "+message);
     output.println(message);
     output.flush();
   }

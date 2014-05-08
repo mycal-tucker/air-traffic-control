@@ -5,15 +5,17 @@ public class Airport {
 	private double x;
 	private double y;
 	
-	private int capacity;
+	private int maxCapacity;
 	
 	private ArrayList<Airplane> landingAirplanes;
 	private ArrayList<Airplane> groundedAirplanes;
 	
+	private final double REQUEST_LAND_THRESHOLD = 10;
+	
 	public Airport(double x, double y, int capacity){
 		this.x = x;
 		this.y = y;
-		this.capacity = capacity;
+		this.maxCapacity = capacity;
 		
 		landingAirplanes = new ArrayList<Airplane>();
 		groundedAirplanes = new ArrayList<Airplane>();
@@ -28,15 +30,24 @@ public class Airport {
 	}
 	
 	public double getCapacity(){
-		return this.capacity;
+		return this.maxCapacity - this.landingAirplanes.size() - this.groundedAirplanes.size();
 	}
 	
 	/**
 	 * Two phase commit thing. Check capacity. For now, just return true. FIXME
+	 * must be synchronized so that two planes can't request landing at the same time.
 	 * @param a
 	 * @return
 	 */
-	public boolean requestLand(Airplane a){
+	public synchronized boolean requestLand(Airplane a){
+		double[] planePos = a.getPosition();
+		double distance = Math.hypot(planePos[0] - this.x, planePos[1] - this.y);
+		if (distance > REQUEST_LAND_THRESHOLD){
+			return false;
+		}
+		if (this.getCapacity() == 0){
+			return false;
+		}
 		this.landingAirplanes.add(a);
 		return true;
 	}
