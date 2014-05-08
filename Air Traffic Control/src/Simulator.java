@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Simulator extends Thread{
 	private int time; //current time of simulation in milliseconds
 	private ArrayList<Airplane> groundVList; //the Airplanes that will be simulated
+	private ArrayList<Airport> airportList;
 
 	private boolean running; //whether or not the simulation has started
 	private DisplayClient dc;
@@ -18,6 +19,7 @@ public class Simulator extends Thread{
 		this.dc = dc;
 		this.running = false;
 		this.groundVList = new ArrayList<Airplane>();
+		this.airportList = new ArrayList<Airport>();
 	}
 
 	/**
@@ -125,6 +127,10 @@ public class Simulator extends Thread{
 		dc.traceOff();
 		dc.clear();
 	}
+	
+	private void addAirport(Airport a){
+		this.airportList.add(a);
+	}
 
 
 	private void printInfo(){
@@ -150,7 +156,7 @@ public class Simulator extends Thread{
 					+ "<hostname> is where DisplayServer is running");
 			System.exit(-1);
 		}
-		int numVehicles = Integer.parseInt(argv[0]);
+		//int numVehicles = Integer.parseInt(argv[0]);
 		//if numVehicles == 0, assumes user meant no followers,
 		//so adds a random vehicle but no followers.
 		
@@ -158,23 +164,15 @@ public class Simulator extends Thread{
 
 		DisplayClient tempDC = new DisplayClient(host);
 		Simulator s = new Simulator(tempDC);
-
-		//add a random gv
-//		Airplane gv1 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s);
-//		VehicleController vc1 = new RandomController(s, gv1);
-//		s.addAirplane(gv1);
-//		vc1.start();
 		
-		//add numVehicles - 1 follower gvs
-//		for (int i = 0; i < numVehicles - 1; i ++){
-//			Airplane tempGV = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s);
-//			VehicleController tempVC = new FollowingController(s, tempGV, gv1);
-//			s.addAirplane(tempGV);
-//			tempVC.start();
-//		}
 		
 		Airport a1 = new Airport(25, 25, 2);
 		Airport a2 = new Airport(75, 75, 2);
+		
+		//s.addAirport(a1);
+		//s.addAirport(a2);
+		
+		//tempDC.sendAirportMessage(s.airportList);
 		
 		//start with 50 fuel
 		Airplane plane1 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s, 50);

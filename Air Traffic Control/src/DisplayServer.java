@@ -128,6 +128,8 @@ public class DisplayServer extends JPanel implements KeyListener {
       return; 
     }
   }
+  
+
 
   public DisplayServer (String hostname) {
     myHostname = hostname;

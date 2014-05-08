@@ -54,6 +54,15 @@ public class DisplayClient  {
     output.flush();
   }
   
+  public void sendAirportMessage(ArrayList<Airport> airportList){
+	  StringBuffer message = new StringBuffer();
+	  message.append("airports");
+	  message.append(" ");
+	  message.append("justFiller for fun");
+	  //output.println(message);
+	  //output.flush();
+  }
+  
   public static void main(String argv[]) throws IOException {
     if (argv.length == 0) {
       System.err.println("Usage: DisplayClient <hostname>\n"+
