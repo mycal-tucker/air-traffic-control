@@ -112,7 +112,7 @@ public class AirplaneController extends Thread{
 			
 			final double requestLandThreshold = 10;
 			final double commitLandThreshold = 5;
-			System.out.println("distance: " + Math.hypot(targX - currX, targY - currY));
+			
 			//if close to airport, request landing
 			if (Math.hypot(targX - currX, targY - currY) < requestLandThreshold){
 				if (this.clearedToLand && Math.hypot(targX - currX, targY - currY) < commitLandThreshold){
@@ -121,7 +121,6 @@ public class AirplaneController extends Thread{
 					this.destinationReached = true;
 				}
 				else if (!clearedToLand){
-					System.out.println("requesting to land");
 					this.clearedToLand = this.endAirport.requestLand(plane);
 				}
 			}
