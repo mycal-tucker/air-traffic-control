@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -19,11 +18,6 @@ public class DisplayServer extends JPanel implements KeyListener {
   protected JFrame frame;
   protected NumberFormat format = new DecimalFormat("#####.##");
   protected String myHostname;
-  protected Color[] my_colors = new Color[] {Color.black,Color.blue,Color.cyan,
-		     Color.green, Color.magenta, 
-		     Color.orange, Color.pink,
-		     Color.red, Color.yellow,
-		     Color.darkGray};
 
 
   public class History {
@@ -197,33 +191,28 @@ public class DisplayServer extends JPanel implements KeyListener {
   }
 
   protected synchronized void drawVehicles(Graphics g) {
-	    g.setColor(Color.black);
+    g.setColor(Color.black);
 
-	    // This chunk of code just translate and rotates the shape.
+    // This chunk of code just translate and rotates the shape.
 
-	    for (int j = 0; j < numVehicles; j++) {
-	      if (j < my_colors.length){
-		g.setColor(my_colors[j]);
-	      }else{
-		g.setColor(my_colors[my_colors.length-1]);
-	      }
-	      int drawX[] = new int[9];
-	      int drawY[] = new int[9];
+    for (int j = 0; j < numVehicles; j++) {
+      int drawX[] = new int[9];
+      int drawY[] = new int[9];
 
-	      for (int i = 0; i < 9; i++) {
-		// We scale the x and y by 5, since the bounds on X and Y are 100x100
-		// but our windows is 500x500.
+      for (int i = 0; i < 9; i++) {
+	// We scale the x and y by 5, since the bounds on X and Y are 100x100
+	// but our windows is 1000x1000.
 
-		double x = gvX[j]*5;
-		double y = gvY[j]*5;
-		double th = gvTheta[j];
-		drawX[i] = (int)(x+Math.cos(th)*shapeX[i]+Math.sin(th)*shapeY[i]);
-		drawY[i] = (int)(y+Math.sin( th)*shapeX[i]-Math.cos(th)*shapeY[i]);
-		drawY[i] = 500- drawY[i];
-	      }
-	      g.drawPolygon(drawX, drawY, 9);
-	    }
-	  }
+	double x = gvX[j]*10;
+	double y = gvY[j]*10;
+	double th = gvTheta[j];
+	drawX[i] = (int)(x+Math.cos(-th)*shapeX[i]+Math.sin(th)*shapeY[i]);
+	drawY[i] = (int)(y-Math.sin( th)*shapeX[i]+Math.cos(th)*shapeY[i]);
+	drawY[i] = 1000- drawY[i];
+      }
+      g.drawPolygon(drawX, drawY, 9);
+    }
+  }
 
   protected synchronized void drawHistories(Graphics g) {
     g.setColor(Color.black);
@@ -235,7 +224,7 @@ public class DisplayServer extends JPanel implements KeyListener {
       int drawY[] = new int[histories[j].myNumPoints];
 
       for (int i = 0; i < histories[j].myNumPoints; i++) {
-	// We scale the x and y by 10, since the bounds on X and Y are 100x100
+	// We scale the x and y by 5, since the bounds on X and Y are 100x100
 	// but our windows is 1000x1000.
 
 	double x = histories[j].myX[i]*10;
