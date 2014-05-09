@@ -7,18 +7,17 @@ import java.util.ArrayList;
 
 public class Simulator extends Thread{
 	private int time; //current time of simulation in milliseconds
-	private ArrayList<Airplane> groundVList; //the Airplanes that will be simulated
+	private ArrayList<Airplane> airplaneList; //the Airplanes that will be simulated
 	private ArrayList<Airport> airportList;
 
 	private boolean running; //whether or not the simulation has started
 	private DisplayClient dc;
-	private int numNonUpdatedGV; //number of ground vehicles that haven't been updated yet
-	//(used in the run() method)
+	private int numNonUpdatedPlanes; 
 
 	public Simulator(DisplayClient dc){
 		this.dc = dc;
 		this.running = false;
-		this.groundVList = new ArrayList<Airplane>();
+		this.airplaneList = new ArrayList<Airplane>();
 		this.airportList = new ArrayList<Airport>();
 	}
 
@@ -50,10 +49,10 @@ public class Simulator extends Thread{
 	 * If the index is illegal, throw an illegal argument exception
 	 */
 	public synchronized Airplane getAirplaneAtInd(int i){
-		if (i < 0 || i >= this.groundVList.size()){
+		if (i < 0 || i >= this.airplaneList.size()){
 			throw new IllegalArgumentException("index out of bounds");
 		}
-		return this.groundVList.get(i);
+		return this.airplaneList.get(i);
 	}
 
 	/**
@@ -62,17 +61,17 @@ public class Simulator extends Thread{
 	 * Note: assumes that the ground vehicle arrives non-updated
 	 */
 	public void addAirplane(Airplane a){
-		this.groundVList.add(a);
+		this.airplaneList.add(a);
 		a.start();
-		this.numNonUpdatedGV ++;
+		this.numNonUpdatedPlanes ++;
 	}
 
 	public int getNumNonUpdated(){
-		return this.numNonUpdatedGV;
+		return this.numNonUpdatedPlanes;
 	}
 
 	public void setNumNonUpdated(int newNum){
-		this.numNonUpdatedGV = newNum;
+		this.numNonUpdatedPlanes = newNum;
 	}
 
 	/**
@@ -86,22 +85,22 @@ public class Simulator extends Thread{
 		this.running = true;
 		this.time = 0;
 
-		while (this.time < 10000){ //100 seconds == 100,000 milliseconds
+		while (this.time < 500000){ //100 seconds == 100,000 milliseconds
 			/*
 			 * Must lock on this (the simulator) to guarantee that all vehicles
 			 * get updated exactly once at each time step.
 			 */
 			synchronized(this){				
-				double[] x = new double[this.groundVList.size()];
-				double[] y = new double[this.groundVList.size()];
-				double[] theta = new double[this.groundVList.size()];
-				for (int i = 0; i < this.groundVList.size(); i ++){
-					Airplane temp = this.groundVList.get(i);
+				double[] x = new double[this.airplaneList.size()];
+				double[] y = new double[this.airplaneList.size()];
+				double[] theta = new double[this.airplaneList.size()];
+				for (int i = 0; i < this.airplaneList.size(); i ++){
+					Airplane temp = this.airplaneList.get(i);
 					x[i] = temp.getPosition()[0];
 					y[i] = temp.getPosition()[1];
 					theta[i] = temp.getPosition()[2];
 				}
-				dc.update(this.groundVList.size(), x, y, theta);
+				dc.update(this.airplaneList.size(), x, y, theta);
 				dc.traceOn();
 				
 				
@@ -109,10 +108,10 @@ public class Simulator extends Thread{
 				
 				notifyAll();
 				//wait for all gv's to update
-				while (this.numNonUpdatedGV > 0){
+				while (this.numNonUpdatedPlanes > 0){
 					try{
 						this.wait();
-						//this.numNonUpdatedGV --;
+						//this.numNonUpdatedPlanes --;
 					}
 					catch(InterruptedException ie){
 						System.err.println("There was an ie error");
@@ -120,7 +119,7 @@ public class Simulator extends Thread{
 					}
 				}
 				
-				this.numNonUpdatedGV = this.groundVList.size();
+				this.numNonUpdatedPlanes = this.airplaneList.size();
 			}
 		}
 		
@@ -133,8 +132,8 @@ public class Simulator extends Thread{
 	}
 
 
-	private void printInfo(){
-		for (Airplane gv: this.groundVList){
+	public void printInfo(){
+		for (Airplane gv: this.airplaneList){
 			String output = new String();
 			output = output + String.format("%.2f", this.time/1000.0) + "\t"; //2 decimal places
 			output = output + String.format("%.2f", gv.getPosition()[0]) + "\t" + 
@@ -166,27 +165,32 @@ public class Simulator extends Thread{
 		Simulator s = new Simulator(tempDC);
 		
 		
-		Airport a1 = new Airport(25, 25, 2);
-		Airport a2 = new Airport(50, 50, 2);
-		Airport a3 = new Airport(25, 75, 2);
+		Airport a1 = new Airport(25, 25, 2, s);
+		Airport a2 = new Airport(50, 50, 2, s);
+		Airport a3 = new Airport(25, 75, 2, s);
+		//Airport a4 = new Airport(75, 25, 2, s);
 		
 		s.addAirport(a1);
 		s.addAirport(a2);
 		s.addAirport(a3);
+		//s.addAirport(a4);
 		
-		tempDC.sendAirportMessage(s.airportList);
+		//tempDC.sendAirportMessage(s.airportList);
 		
 		//start with 50 fuel
-		Airplane plane1 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s, 50);
-		//departure time of 50
-		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 50);
+		double[] p1startPose = {25, 25, 0};
+		Airplane plane1 = new Airplane(p1startPose, 5, 0, s, 50);
+		plane1.setPlaneName("plane1");
 		
-		Airplane plane2 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s, 50);
-		AirplaneController cont2 = new AirplaneController(s, plane1, a3, a2, 50);
+		double[] p2startPose = {5, 5, 0};
+		Airplane plane2 = new Airplane(p2startPose, 5, 0, s, 50);
+		plane2.setPlaneName("plane2");
 		
+		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 100);
+		AirplaneController cont2 = new AirplaneController(s, plane2, a3, a2, 100);
 		s.addAirplane(plane1);
-		cont1.start();
 		s.addAirplane(plane2);
+		cont1.start();
 		cont2.start();
 
 		s.run();

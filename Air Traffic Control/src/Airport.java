@@ -6,6 +6,7 @@ public class Airport {
 	private double y;
 	
 	private int maxCapacity;
+	private Simulator s;
 	
 	private ArrayList<Airplane> landingAirplanes;
 	private ArrayList<Airplane> groundedAirplanes;
@@ -14,14 +15,15 @@ public class Airport {
 	
 	private String name;
 	
-	private long lastLandingTime;
-	private final long landingTimeWindow = 100; //milliseconds
+	private int lastLandingTime;
+	private final int landingTimeWindow = 5000; //milliseconds
 	
-	public Airport(double x, double y, int capacity){
+	public Airport(double x, double y, int capacity, Simulator sim){
 		this.x = x;
 		this.y = y;
 		this.maxCapacity = capacity;
-		this.lastLandingTime = 0; //will be overwritten once something lands.
+		this.s = sim;
+		this.lastLandingTime = Integer.MIN_VALUE; //will be overwritten once something lands.
 		
 		landingAirplanes = new ArrayList<Airplane>();
 		groundedAirplanes = new ArrayList<Airplane>();
@@ -35,11 +37,15 @@ public class Airport {
 		return this.y;
 	}
 	
+	public int getMaxCapacity(){
+		return this.maxCapacity;
+	}
+	
 	public void setName(String s){
 		this.name = s.toUpperCase();
 	}
 	
-	public double getCapacity(){
+	public synchronized double getCapacity(){
 		return this.maxCapacity - this.landingAirplanes.size() - this.groundedAirplanes.size();
 	}
 	
@@ -68,6 +74,7 @@ public class Airport {
 	 * @return
 	 */
 	public synchronized boolean requestLand(Airplane a){
+		System.out.println(a.toString() + " requesting landing");
 		if (this.landingAirplanes.contains(a)){ //if you were cleared to land, you are still
 			//cleared to land
 			return true;
@@ -82,7 +89,12 @@ public class Airport {
 		if (this.getCapacity() == 0){ //if we don't have spots, you're not cleared to land
 			return false;
 		}
-		long currTime = System.currentTimeMillis();
+		if (this.landingAirplanes.size() > 0){
+			return false; //I (Mycal) think only one airplane should be cleared to land at once.
+			//This solves the problem of two airplanes requesting to land at the same time and
+			//both being cleared because neither has actually landed yet
+		}
+		int currTime = this.s.getCurrentSec()*1000 + this.s.getCurrentMSec();
 		if (currTime <= this.lastLandingTime + this.landingTimeWindow){
 			return false; //have to wait until safe.
 		}
@@ -98,15 +110,17 @@ public class Airport {
 	public void commitLand(Airplane a){
 		if (!this.landingAirplanes.contains(a)){
 			System.err.println("you can't commit a landing before requesting it.");
+			System.err.println(a.toString() + " is at fault");
 			return;
 		}
 		this.landingAirplanes.remove(a);
 		this.groundedAirplanes.add(a);
 		a.setFlying(false);
-		this.lastLandingTime = System.currentTimeMillis();
+		this.lastLandingTime = this.s.getCurrentSec()*1000 + this.s.getCurrentMSec();
+		System.err.println(a.toString() + " landed");
 	}
 	
-	public void unrequestLand(Airplane a){
+	public synchronized void unrequestLand(Airplane a){
 		if (this.landingAirplanes.contains(a)){
 			this.landingAirplanes.remove(a);
 		}

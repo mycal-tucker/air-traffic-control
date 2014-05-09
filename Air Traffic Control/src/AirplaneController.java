@@ -13,6 +13,9 @@ public class AirplaneController extends Thread{
 	private boolean clearedToLand;
 	private boolean destinationReached;
 	
+	final double requestLandThreshold = 5;
+	final double commitLandThreshold = 5;
+	
 	public AirplaneController(Simulator s, Airplane p, Airport startAirport, Airport endAirport, int departureTime){
 		if (p == null){
 			throw new IllegalArgumentException("plane was null");
@@ -35,6 +38,7 @@ public class AirplaneController extends Thread{
 		double oldTime = 0;
 		
 		while (newTime < 100){
+			
 			/*
 			 * Must lock on the simulator to make sure that simulator isn't accessed until
 			 * this controller has seen a timestep and has updated appropriately.
@@ -74,6 +78,8 @@ public class AirplaneController extends Thread{
 	}
 
 	public Control getControl(int time){
+
+		
 		//TODO: logic
 		if (time < departureTime){ //get the plane pointed in the right direction
 			//double[] oldPose = plane.getPosition();
@@ -83,8 +89,8 @@ public class AirplaneController extends Thread{
 			//change the angle to point from startAirport to endAirport 
 			newPose[2] = Math.atan2(endAirport.getY() - startAirport.getY(), endAirport.getX() - startAirport.getX());
 			//TODO unit tests for angle calculation
-			plane.setPosition(newPose);
-			if (plane.getFlying()){
+			this.plane.setPosition(newPose);
+			if (this.plane.getFlying()){
 				System.err.println("The plane is flying but it isn't the departure time yet. What?");
 			}
 			else{
@@ -94,7 +100,7 @@ public class AirplaneController extends Thread{
 			}
 		}
 		if (time >= departureTime && !destinationReached){
-			plane.setFlying(true);
+			this.plane.setFlying(true);
 			
 			double targX = this.endAirport.getX();
 			double targY = this.endAirport.getY();
@@ -110,18 +116,19 @@ public class AirplaneController extends Thread{
 			final double Krot = 1;
 			double omega = Krot*(targTheta - currTheta);
 			
-			final double requestLandThreshold = 10;
-			final double commitLandThreshold = 5;
 			
 			//if close to airport, request landing
 			if (Math.hypot(targX - currX, targY - currY) < requestLandThreshold){
 				if (this.clearedToLand && Math.hypot(targX - currX, targY - currY) < commitLandThreshold){
-					this.endAirport.commitLand(plane);
+					this.endAirport.commitLand(this.plane);
 					this.plane.setFlying(false); //it landed!
 					this.destinationReached = true;
 				}
 				else if (!clearedToLand){
-					this.clearedToLand = this.endAirport.requestLand(plane);
+					this.clearedToLand = this.endAirport.requestLand(this.plane);
+					if (!clearedToLand){
+						return this.holdingPattern();
+					}
 				}
 			}
 			//TODO
@@ -132,6 +139,11 @@ public class AirplaneController extends Thread{
 			//it got to the goal. make it disappear?
 		}
 		return new Control(10, 0);
+	}
+	
+	private Control holdingPattern(){
+		System.err.println("in a holding pattern");
+		return new Control(5, Math.PI/4);
 	}
 	
 	public Airport getStartAirport(){

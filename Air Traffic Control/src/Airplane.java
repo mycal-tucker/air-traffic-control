@@ -30,6 +30,8 @@ public class Airplane extends Thread{
 	
 	private boolean flying;
 	
+	private String name;
+	
 	public Airplane(double[] pose, double s, double omega, Simulator sim, double startFuel){
 		this.s = sim;
 
@@ -286,23 +288,18 @@ public class Airplane extends Thread{
 		return modded - 2*Math.PI;
 	}
 
-	/**
-	 * The String representation of a ground vehicle displays the position and velocity
-	 * state of the vehicle.
-	 */
+
+	public void setPlaneName(String name){
+		this.name = name;
+	}
+	
+	public String getPlaneName(){
+		return this.name;
+	}
+	
 	@Override
 	public synchronized String toString(){
-		double[] pos = this.getPosition();
-		double[] vel = this.getVelocity();
-
-		String posString = "";
-		for (int i = 0; i < pos.length; i ++){
-			posString = posString + String.format("%.2f", pos[i]) + " ";
-		}
-		String velString = "";
-		for (int i = 0; i < vel.length; i ++){
-			velString = velString + String.format("%.2f", vel[i]) + " ";
-		}
-		return "positions: " + posString + "        velocities: " + velString;
+		String returnable = "Flight " + this.name;
+		return returnable;
 	}
 }
