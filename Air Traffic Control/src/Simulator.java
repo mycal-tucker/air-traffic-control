@@ -167,10 +167,12 @@ public class Simulator extends Thread{
 		
 		
 		Airport a1 = new Airport(25, 25, 2);
-		Airport a2 = new Airport(75, 75, 2);
+		Airport a2 = new Airport(50, 50, 2);
+		Airport a3 = new Airport(25, 75, 2);
 		
 		s.addAirport(a1);
 		s.addAirport(a2);
+		s.addAirport(a3);
 		
 		tempDC.sendAirportMessage(s.airportList);
 		
@@ -179,8 +181,13 @@ public class Simulator extends Thread{
 		//departure time of 50
 		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 50);
 		
+		Airplane plane2 = new Airplane(getStartPose(), getStartSpeed(), getStartOmega(), s, 50);
+		AirplaneController cont2 = new AirplaneController(s, plane1, a3, a2, 50);
+		
 		s.addAirplane(plane1);
 		cont1.start();
+		s.addAirplane(plane2);
+		cont2.start();
 
 		s.run();
 	}
