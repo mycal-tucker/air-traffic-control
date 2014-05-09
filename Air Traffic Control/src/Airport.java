@@ -74,7 +74,7 @@ public class Airport {
 	 * @return
 	 */
 	public synchronized boolean requestLand(Airplane a){
-		System.out.println(a.toString() + " requesting landing");
+		//System.out.println(a.toString() + " requesting landing");
 		if (this.landingAirplanes.contains(a)){ //if you were cleared to land, you are still
 			//cleared to land
 			return true;

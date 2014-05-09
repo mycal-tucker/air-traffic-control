@@ -85,7 +85,7 @@ public class Simulator extends Thread{
 		this.running = true;
 		this.time = 0;
 
-		while (this.time < 500000){ //100 seconds == 100,000 milliseconds
+		while (this.time < 100000){ //100 seconds == 100,000 milliseconds
 			/*
 			 * Must lock on this (the simulator) to guarantee that all vehicles
 			 * get updated exactly once at each time step.
@@ -99,6 +99,7 @@ public class Simulator extends Thread{
 					x[i] = temp.getPosition()[0];
 					y[i] = temp.getPosition()[1];
 					theta[i] = temp.getPosition()[2];
+					//System.out.println("theta: " + theta[i]);
 				}
 				dc.update(this.airplaneList.size(), x, y, theta);
 				dc.traceOn();
@@ -165,8 +166,8 @@ public class Simulator extends Thread{
 		Simulator s = new Simulator(tempDC);
 		
 		
-		Airport a1 = new Airport(25, 25, 2, s);
-		Airport a2 = new Airport(50, 50, 2, s);
+		Airport a1 = new Airport(25, 50, 2, s);
+		Airport a2 = new Airport(75, 50, 2, s);
 		Airport a3 = new Airport(25, 75, 2, s);
 		//Airport a4 = new Airport(75, 25, 2, s);
 		
@@ -187,7 +188,9 @@ public class Simulator extends Thread{
 		plane2.setPlaneName("plane2");
 		
 		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 100);
-		AirplaneController cont2 = new AirplaneController(s, plane2, a3, a2, 100);
+		cont1.addOtherAirplane(plane2);
+		AirplaneController cont2 = new AirplaneController(s, plane2, a2, a1, 100);
+		cont2.addOtherAirplane(plane1);
 		s.addAirplane(plane1);
 		s.addAirplane(plane2);
 		cont1.start();
