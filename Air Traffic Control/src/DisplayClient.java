@@ -54,9 +54,20 @@ public class DisplayClient  {
     output.flush();
   }
   
+  /**
+   * The message goes like this
+   * airports size x1 y1 x2 y2 x3 y3
+   * 
+   * e.g.:
+   * airports 2 25 25 75 75
+   * 
+   * @param airportList: list of airports
+   */
   public void sendAirportMessage(ArrayList<Airport> airportList){
 	  StringBuffer message = new StringBuffer();
 	  message.append("airports");
+	  message.append(" ");
+	  message.append(airportList.size());
 	  message.append(" ");
 	  for (int i = 0; i < airportList.size(); i ++){
 		  Airport a = airportList.get(i);

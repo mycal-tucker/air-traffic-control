@@ -98,7 +98,17 @@ public class DisplayServer extends JPanel implements KeyListener {
 	  else if (tok.equals("airports")){
 		  synchronized (my_display){
 			  System.out.println("got an airport message");
-			  //TODO parse more info about all the airports
+			  synchronized(my_display){
+				  tok = st.nextToken();
+				  int numAirports = Integer.parseInt(tok);
+				  for (int i = 0; i < numAirports/2; i ++){
+					  tok = st.nextToken();
+					  double x = Double.parseDouble(tok);
+					  tok = st.nextToken();
+					  double y = Double.parseDouble(tok);
+					  //TODO: draw an airport at x, y
+				  }
+			  }
 		  }
 	  }
 	  /*
