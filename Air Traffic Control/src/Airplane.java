@@ -23,11 +23,11 @@ public class Airplane extends Thread{
 	private final double MAXOMEGA = Math.PI/4;
 	
 	//no noise
-//	private final double DOWNRANGE_VAR = Math.sqrt(0);
-//	private final double CROSSRANGE_VAR = Math.sqrt(0);
+	private final double DOWNRANGE_VAR = Math.sqrt(0);
+	private final double CROSSRANGE_VAR = Math.sqrt(0);
 	//a bit of noise
-	private final double DOWNRANGE_VAR = Math.sqrt(.01);
-	private final double CROSSRANGE_VAR = Math.sqrt(.01);
+//	private final double DOWNRANGE_VAR = Math.sqrt(.01);
+//	private final double CROSSRANGE_VAR = Math.sqrt(.01);
 
 	private double fuelLevel;
 	

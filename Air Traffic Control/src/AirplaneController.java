@@ -97,7 +97,9 @@ public class AirplaneController extends Thread{
 			Control avoidOtherPlanes = this.collisionAvoidance();
 			if (avoidOtherPlanes != null){
 				//System.out.println("just dodged a collision!");
-				return avoidOtherPlanes;
+				//for now, ignore collision avoidance so I can focus on holding patterns
+				//FIXME
+				//return avoidOtherPlanes;
 			}
 			//if avoidOtherPlanes is null then we don't need to worry about collisions yet.
 			double targX = this.endAirport.getX();
@@ -108,6 +110,13 @@ public class AirplaneController extends Thread{
 			double currTheta = currPosition[2];
 			double targTheta = Math.atan2(targY - currY, targX - currX);
 			double omega = omegaGain(targTheta, currTheta);
+			//only for debugging
+//			if (this.plane.getPlaneName().equals("plane3")){
+//				System.out.println("curr: " + currTheta);
+//				System.out.println("targ: " + targTheta);
+//				System.out.println("omega: " + omega);
+//				System.out.println();
+//			}
 			
 			
 			//if close to airport, request landing
@@ -121,7 +130,7 @@ public class AirplaneController extends Thread{
 					this.clearedToLand = this.endAirport.requestLand(this.plane);
 					if (!clearedToLand){
 						this.holdingStartTime = this.s.getCurrentSec()*1000 + this.s.getCurrentMSec();
-						//return this.holdingPattern();
+						return this.holdingPattern();
 					}
 				}
 			}
@@ -237,17 +246,23 @@ public class AirplaneController extends Thread{
 	
 	private Control holdingPattern(){
 		//TODO logic
-		System.err.println("in a holding pattern");
+		//System.out.println("in a holding pattern");
 		return new Control(this.linSpeed, Math.PI/4);
 	}
 	
 	public double omegaGain(double desired, double actual){
-		double diff = (desired-actual)%(2*Math.PI);
-		if (desired < Math.PI/4 && actual > 3*Math.PI/4){
-			diff = desired + (2*Math.PI - actual);
+		if (desired < 0){
+			desired += 2*Math.PI;
 		}
-		else if (desired > 3*Math.PI/4 && actual < Math.PI/4){
-			diff = 2*Math.PI - desired + actual;
+		if (actual < 0){
+			actual += 2*Math.PI;
+		}
+		double diff = (desired-actual)%(2*Math.PI);
+		if (diff > Math.PI){
+			diff = -1*(diff - Math.PI);
+		}
+		else if (diff < -Math.PI){
+			diff = -1*(diff + Math.PI);
 		}
 		return this.Krot*diff;
 	}
