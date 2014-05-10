@@ -166,10 +166,10 @@ public class Simulator extends Thread{
 		Simulator s = new Simulator(tempDC);
 		
 		
-		Airport a1 = new Airport(25, 25, 2, s);
-		Airport a2 = new Airport(50, 50, 2, s);
-		Airport a3 = new Airport(25, 75, 2, s);
-		Airport a4 = new Airport(75, 25, 2, s);
+		Airport a1 = new Airport(25, 25, 3, s);
+		Airport a2 = new Airport(50, 50, 3, s);
+		Airport a3 = new Airport(25, 75, 3, s);
+		Airport a4 = new Airport(75, 25, 3, s);
 		
 		s.addAirport(a1);
 		s.addAirport(a2);
@@ -180,15 +180,15 @@ public class Simulator extends Thread{
 		
 		//start with 50 fuel
 		double[] p1startPose = {25, 25, 0};
-		Airplane plane1 = new Airplane(p1startPose, 5, 0, s, 50);
+		Airplane plane1 = new Airplane(p1startPose, 5, 0, s, 25);
 		plane1.setPlaneName("plane1");
 		
 		double[] p2startPose = {5, 5, 0};
-		Airplane plane2 = new Airplane(p2startPose, 5, 0, s, 50);
+		Airplane plane2 = new Airplane(p2startPose, 5, 0, s, 25);
 		plane2.setPlaneName("plane2");
 		
 		double[] p3startPose = {5, 5, 0};
-		Airplane plane3= new Airplane(p3startPose, 5, 0, s, 50);
+		Airplane plane3= new Airplane(p3startPose, 5, 0, s, 25);
 		plane3.setPlaneName("plane3");
 		
 		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 100);

@@ -91,6 +91,10 @@ public class AirplaneController extends Thread{
 		if (time < departureTime){ //get the plane pointed in the right direction
 			return this.beforeTakeoff();
 		}
+		if (this.plane.getFuelLevel() <= 0){
+			System.out.println(this.plane.getPlaneName() + " is out of fuel");
+			return null;
+		}
 		if (time >= departureTime && !destinationReached){
 			this.plane.setFlying(true);
 			
@@ -99,7 +103,7 @@ public class AirplaneController extends Thread{
 				//System.out.println("just dodged a collision!");
 				//for now, ignore collision avoidance so I can focus on holding patterns
 				//FIXME
-				//return avoidOtherPlanes;
+				return avoidOtherPlanes;
 			}
 			//if avoidOtherPlanes is null then we don't need to worry about collisions yet.
 			double targX = this.endAirport.getX();

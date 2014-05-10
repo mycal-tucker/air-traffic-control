@@ -223,6 +223,10 @@ public class Airplane extends Thread{
 			throw new RuntimeException("You should not pass in a negative value for time");
 		}
 		
+		if (this.fuelLevel <=0 ){
+			this.setFlying(false);
+		}
+		
 		if (!flying){
 			return; //don't change anything if flying (the plane shouldn't move)
 			//we also assume that staying at an airport doesn't burn any fuel.
