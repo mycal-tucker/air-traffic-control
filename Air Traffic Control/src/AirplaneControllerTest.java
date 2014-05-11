@@ -1,7 +1,6 @@
-import static org.junit.Assert.*;
+package src;
 
 import org.junit.Test;
-
 
 public class AirplaneControllerTest {
 

@@ -5,6 +5,8 @@
  * Since it is immutable, it is threadsafe.
  *
  */
+package src;
+
 import java.lang.IllegalArgumentException;
 
 public class Control

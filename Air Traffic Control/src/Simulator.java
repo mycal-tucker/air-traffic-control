@@ -1,3 +1,4 @@
+package src;
 
 import java.util.ArrayList;
 
@@ -150,6 +151,8 @@ public class Simulator extends Thread{
 	 * @param argv
 	 */
 	public static void main(String[] argv) {
+		
+		
 		if (argv.length <= 1) {
 			System.err.println("Usage: Simulator <numVehicles> <hostname> where "
 					+ "<numVehicles> is the number of vehicles to simulate and"
