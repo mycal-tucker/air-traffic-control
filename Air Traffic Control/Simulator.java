@@ -103,6 +103,7 @@ public class Simulator extends Thread{
 				dc.update(this.airplaneList.size(), x, y, theta);
 				dc.traceOn();
 				
+				System.out.println(this.time);
 				
 				this.time += 10;
 				
@@ -125,6 +126,8 @@ public class Simulator extends Thread{
 		
 		dc.traceOff();
 		dc.clear();
+		
+		System.out.println("EOF Reached");
 	}
 	
 	private void addAirport(Airport a){
