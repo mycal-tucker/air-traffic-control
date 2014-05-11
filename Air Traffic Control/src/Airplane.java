@@ -1,5 +1,3 @@
-package src;
-
 import java.util.Random;
 
 //I just want to see that this shows up on git
