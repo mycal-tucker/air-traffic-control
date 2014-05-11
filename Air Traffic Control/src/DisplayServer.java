@@ -46,6 +46,7 @@ public class DisplayServer extends JPanel implements KeyListener {
   boolean trace = false;
 
   public synchronized void clear() {
+	  System.out.println("Clear In");
     if (histories !=null){
       for (int i = 0; i < histories.length; i++) {
 	histories[i].myNumPoints = 0;
@@ -53,6 +54,7 @@ public class DisplayServer extends JPanel implements KeyListener {
 	histories[i].trueHistoryLength = 0;
       }
     }
+    System.out.println("Clear Out");
   }
 
   public synchronized void resetHistories(int numVehicles) {
@@ -100,6 +102,7 @@ public class DisplayServer extends JPanel implements KeyListener {
 	  } else if (tok.equals("traceoff")) {
 	    synchronized (my_display) {
 	      my_display.trace = false;
+	      System.out.println("traceoff");
 	    }
 	  } 
 

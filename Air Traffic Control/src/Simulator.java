@@ -78,13 +78,14 @@ public class Simulator extends Thread{
 	 * on their own.
 	 */
 	public void run(){
-		dc.traceOff();
 		dc.clear();
 		
 		this.running = true;
 		this.time = 0;
 
 		while (this.time < 1000000){ //100 seconds == 100,000 milliseconds
+			
+			System.out.println(1000000-this.time);
 			/*
 			 * Must lock on this (the simulator) to guarantee that all vehicles
 			 * get updated exactly once at each time step.
@@ -102,8 +103,6 @@ public class Simulator extends Thread{
 				}
 				dc.update(this.airplaneList.size(), x, y, theta);
 				dc.traceOn();
-				
-				System.out.println(this.time);
 				
 				this.time += 10;
 				
@@ -213,7 +212,7 @@ public class Simulator extends Thread{
 		cont2.start();
 		cont3.start();
 
-		s.run();
+		s.start();
 	}
 	
 	private static double[] getStartPose(){
