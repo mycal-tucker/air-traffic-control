@@ -291,7 +291,7 @@ public class DisplayServer extends JPanel implements KeyListener {
 	drawX[i] = (int)(x);
 	drawY[i] = 100*gain- (int)y;
       }
-      g.drawPolygon(drawX, drawY, drawX.length);
+      g.drawPolyline(drawX, drawY, drawX.length);
     }
   }
 
