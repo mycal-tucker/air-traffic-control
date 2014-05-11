@@ -153,17 +153,13 @@ public class Simulator extends Thread{
 	public static void main(String[] argv) {
 		
 		
-		if (argv.length <= 1) {
-			System.err.println("Usage: Simulator <numVehicles> <hostname> where "
-					+ "<numVehicles> is the number of vehicles to simulate and"
+		if (argv.length < 1) {
+			System.err.println("Usage: Simulator <hostname> where "
 					+ "<hostname> is where DisplayServer is running");
 			System.exit(-1);
 		}
-		//int numVehicles = Integer.parseInt(argv[0]);
-		//if numVehicles == 0, assumes user meant no followers,
-		//so adds a random vehicle but no followers.
 		
-		String host = argv[1];
+		String host = argv[0];
 
 		DisplayClient tempDC = new DisplayClient(host);
 		Simulator s = new Simulator(tempDC);
@@ -179,9 +175,8 @@ public class Simulator extends Thread{
 		s.addAirport(a3);
 		s.addAirport(a4);
 		
-		//tempDC.sendAirportMessage(s.airportList);
+		tempDC.sendAirportMessage(s.airportList);
 		
-		//start with 50 fuel
 		double[] p1startPose = {25, 25, 0};
 		Airplane plane1 = new Airplane(p1startPose, 5, 0, s, 100);
 		plane1.setPlaneName("plane1");
