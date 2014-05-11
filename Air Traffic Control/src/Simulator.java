@@ -85,7 +85,7 @@ public class Simulator extends Thread{
 		this.running = true;
 		this.time = 0;
 
-		while (this.time < 50000){ //100 seconds == 100,000 milliseconds
+		while (this.time < 1000000){ //100 seconds == 100,000 milliseconds
 			/*
 			 * Must lock on this (the simulator) to guarantee that all vehicles
 			 * get updated exactly once at each time step.
@@ -167,7 +167,7 @@ public class Simulator extends Thread{
 		
 		
 		Airport a1 = new Airport(25, 25, 3, s);
-		Airport a2 = new Airport(50, 50, 3, s);
+		Airport a2 = new Airport(50, 50, 2, s);
 		Airport a3 = new Airport(25, 75, 3, s);
 		Airport a4 = new Airport(75, 25, 3, s);
 		
@@ -180,15 +180,15 @@ public class Simulator extends Thread{
 		
 		//start with 50 fuel
 		double[] p1startPose = {25, 25, 0};
-		Airplane plane1 = new Airplane(p1startPose, 5, 0, s, 25);
+		Airplane plane1 = new Airplane(p1startPose, 5, 0, s, 100);
 		plane1.setPlaneName("plane1");
 		
 		double[] p2startPose = {5, 5, 0};
-		Airplane plane2 = new Airplane(p2startPose, 5, 0, s, 25);
+		Airplane plane2 = new Airplane(p2startPose, 5, 0, s, 100);
 		plane2.setPlaneName("plane2");
 		
 		double[] p3startPose = {5, 5, 0};
-		Airplane plane3= new Airplane(p3startPose, 5, 0, s, 25);
+		Airplane plane3= new Airplane(p3startPose, 5, 0, s, 100);
 		plane3.setPlaneName("plane3");
 		
 		AirplaneController cont1 = new AirplaneController(s, plane1, a1, a2, 100);
