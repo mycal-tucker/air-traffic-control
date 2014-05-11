@@ -62,6 +62,7 @@ public class Airplane extends Thread{
 			synchronized(this.s){
 				try{
 					time = this.s.getCurrentSec() + .001*this.s.getCurrentMSec();
+					System.out.println(time);
 					if (time >= oldTime + .01){
 						double timeDif = time-oldTime;
 						int sec = (int)(timeDif);
@@ -81,6 +82,7 @@ public class Airplane extends Thread{
 					System.err.println("There was an interrupted exception");
 					System.err.println(ie);
 				}
+				s.notifyAll();
 			}
 		}
 	}

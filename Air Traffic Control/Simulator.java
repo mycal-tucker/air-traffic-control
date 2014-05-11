@@ -26,6 +26,7 @@ public class Simulator extends Thread{
 	 */
 	public synchronized int getCurrentSec(){
 		if (this.running){
+			System.out.println(this.time/1000);
 			return this.time/1000;
 		}
 		return 0;
@@ -83,9 +84,9 @@ public class Simulator extends Thread{
 		this.running = true;
 		this.time = 0;
 
-		while (this.time < 1000000){ //100 seconds == 100,000 milliseconds
+		while (this.time < 100000){ //100 seconds == 100,000 milliseconds
 			
-			System.out.println(1000000-this.time);
+//			System.out.println(1000000-this.time);
 			/*
 			 * Must lock on this (the simulator) to guarantee that all vehicles
 			 * get updated exactly once at each time step.
@@ -153,7 +154,7 @@ public class Simulator extends Thread{
 	public static void main(String[] argv) {
 		
 		
-		if (argv.length < 1) {
+		if (argv.length <= 0) {
 			System.err.println("Usage: Simulator <hostname> where "
 					+ "<hostname> is where DisplayServer is running");
 			System.exit(-1);
